@@ -30,6 +30,6 @@
 *.exe
 *.out
 *.app
-data
 .DS_Store
-svp
+*.wk
+*.yuv
