@@ -33,6 +33,23 @@ extern "C" {
 SAMPLE_VI_DUMP_THREAD_INFO_S g_stViDumpRawThreadInfo;
 
 
+combo_dev_attr_t MIPI_4lane_CHN0_SENSOR_IMX385_12BIT_2M_NOWDR_ATTR =
+{
+    .devno = 0,
+    .input_mode = INPUT_MODE_MIPI,
+    .data_rate = MIPI_DATA_RATE_X1,
+    .img_rect = {0, 0, 1920, 1080},
+
+    {
+        .mipi_attr =
+        {
+            DATA_TYPE_RAW_12BIT,
+            HI_MIPI_WDR_MODE_NONE,
+            {0, 1, 2, 3}
+        }
+    }
+};
+
 combo_dev_attr_t MIPI_4lane_CHN0_SENSOR_IMX327_12BIT_2M_NOWDR_ATTR =
 {
     .devno = 0,
@@ -406,6 +423,46 @@ combo_dev_attr_t MIPI_4lane_CHN0_SENSOR_OS05A_10BIT_4M_WDR2TO1_ATTR =
     }
 };
 
+VI_DEV_ATTR_S DEV_ATTR_IMX385_2M_BASE =
+{
+    VI_MODE_MIPI,
+    VI_WORK_MODE_1Multiplex,
+    {0xFFF00000,    0x0},
+    VI_SCAN_PROGRESSIVE,
+    {-1, -1, -1, -1},
+    VI_DATA_SEQ_YUYV,
+
+    {
+    /*port_vsync   port_vsync_neg     port_hsync        port_hsync_neg        */
+    VI_VSYNC_PULSE, VI_VSYNC_NEG_LOW, VI_HSYNC_VALID_SINGNAL,VI_HSYNC_NEG_HIGH,VI_VSYNC_VALID_SINGAL,VI_VSYNC_VALID_NEG_HIGH,
+
+    /*hsync_hfb    hsync_act    hsync_hhb*/
+    {0,            1280,        0,
+    /*vsync0_vhb vsync0_act vsync0_hhb*/
+     0,            720,        0,
+    /*vsync1_vhb vsync1_act vsync1_hhb*/
+     0,            0,            0}
+    },
+    VI_DATA_TYPE_RGB,
+    HI_FALSE,
+    {1920, 1080},
+    {
+        {
+            {1920 , 1080},
+
+        },
+        {
+            VI_REPHASE_MODE_NONE,
+            VI_REPHASE_MODE_NONE
+        }
+    },
+    {
+        WDR_MODE_NONE,
+        1080
+    },
+    DATA_RATE_X1
+};
+	
 VI_DEV_ATTR_S DEV_ATTR_IMX327_2M_BASE =
 {
     VI_MODE_MIPI,
@@ -1605,6 +1662,10 @@ HI_S32 SAMPLE_COMM_VI_GetComboAttrBySns(SAMPLE_SNS_TYPE_E enSnsType, combo_dev_t
 {
     switch (enSnsType)
     {
+		case SONY_IMX385_MIPI_2M_30FPS_12BIT:
+			hi_memcpy(pstComboAttr, sizeof(combo_dev_attr_t), &MIPI_4lane_CHN0_SENSOR_IMX385_12BIT_2M_NOWDR_ATTR, sizeof(combo_dev_attr_t));
+            break;
+			
         case SONY_IMX327_MIPI_2M_30FPS_12BIT:
             hi_memcpy(pstComboAttr, sizeof(combo_dev_attr_t), &MIPI_4lane_CHN0_SENSOR_IMX327_12BIT_2M_NOWDR_ATTR, sizeof(combo_dev_attr_t));
             break;
@@ -2009,6 +2070,10 @@ HI_S32 SAMPLE_COMM_VI_GetDevAttrBySns(SAMPLE_SNS_TYPE_E enSnsType, VI_DEV_ATTR_S
 {
     switch (enSnsType)
     {
+		case SONY_IMX385_MIPI_2M_30FPS_12BIT:
+			hi_memcpy(pstViDevAttr, sizeof(VI_DEV_ATTR_S), &DEV_ATTR_IMX385_2M_BASE, sizeof(VI_DEV_ATTR_S));
+            break;
+			
         case SONY_IMX327_MIPI_2M_30FPS_12BIT:
         case SONY_IMX327_2L_MIPI_2M_30FPS_12BIT:
         case SONY_IMX327_2L_MIPI_2M_30FPS_12BIT_WDR2TO1:
@@ -2087,6 +2152,7 @@ HI_S32 SAMPLE_COMM_VI_GetPipeAttrBySns(SAMPLE_SNS_TYPE_E enSnsType, VI_PIPE_ATTR
 {
     switch (enSnsType)
     {
+		case SONY_IMX385_MIPI_2M_30FPS_12BIT:
         case SONY_IMX327_MIPI_2M_30FPS_12BIT:
         case SONY_IMX327_2L_MIPI_2M_30FPS_12BIT:
         case SONY_IMX327_2L_MIPI_2M_30FPS_12BIT_WDR2TO1:
@@ -2163,6 +2229,7 @@ HI_S32 SAMPLE_COMM_VI_GetChnAttrBySns(SAMPLE_SNS_TYPE_E enSnsType, VI_CHN_ATTR_S
 {
     switch (enSnsType)
     {
+		case SONY_IMX385_MIPI_2M_30FPS_12BIT:
         case SONY_IMX327_MIPI_2M_30FPS_12BIT:
         case SONY_IMX327_MIPI_2M_30FPS_12BIT_WDR2TO1:
         case SONY_IMX327_2L_MIPI_2M_30FPS_12BIT:
@@ -3540,6 +3607,7 @@ HI_S32 SAMPLE_COMM_VI_GetSizeBySensor(SAMPLE_SNS_TYPE_E enMode, PIC_SIZE_E* penS
 
     switch (enMode)
     {
+		case SONY_IMX385_MIPI_2M_30FPS_12BIT:
         case SONY_IMX327_MIPI_2M_30FPS_12BIT:
         case SONY_IMX327_MIPI_2M_30FPS_12BIT_WDR2TO1:
             *penSize = PIC_1080P;
@@ -3609,6 +3677,7 @@ HI_S32 SAMPLE_COMM_VI_GetFrameRateBySensor(SAMPLE_SNS_TYPE_E enMode, HI_U32* pu3
 
     switch (enMode)
     {
+		case SONY_IMX385_MIPI_2M_30FPS_12BIT:
         case SONY_IMX327_MIPI_2M_30FPS_12BIT:
         case SONY_IMX327_MIPI_2M_30FPS_12BIT_WDR2TO1:
         case SONY_IMX307_MIPI_2M_30FPS_12BIT:
@@ -3678,6 +3747,7 @@ combo_dev_t SAMPLE_COMM_VI_GetComboDevBySensor(SAMPLE_SNS_TYPE_E enMode, HI_S32 
 
     switch (enMode)
     {
+		case SONY_IMX385_MIPI_2M_30FPS_12BIT:
         case SONY_IMX327_MIPI_2M_30FPS_12BIT:
         case SONY_IMX327_MIPI_2M_30FPS_12BIT_WDR2TO1:
         case SONY_IMX307_MIPI_2M_30FPS_12BIT:
